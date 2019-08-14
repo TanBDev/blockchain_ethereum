@@ -57,7 +57,18 @@ Implementation : Every time we call a smart contract’s funtion, one of the arg
 To call a smart contract’s function we need to go to /blockchain_transactions.go
 Here is an example:
 ```
-func blockchainStartNewPayment(price int64, externalPayerId int64, externalReceiverId int64) (*types.Transaction, error){    contract, err := contracts.NewPayments(common.HexToAddress("0xfb7974b7616a0c0dbd08c7fee7f1291548045e33"), blockchain)    if err != nil {       fmt.Printf("Unable to bind to deployed instance of contract:%v", err)    }     payment, er := contract.StartNewPayment(auth, big.NewInt(price), big.NewInt(externalPayerId), big.NewInt(externalReceiverId))    if err != nil {       fmt.Println("Unable to bind to deployed instance of contract:%v :%v", er, hello)    }    fmt.Printf("new payment :%v", hello)    return hello, er }
+func blockchainStartNewPayment(price int64, externalPayerId int64, externalReceiverId int64) (*types.Transaction, error){
+	contract, err := contracts.NewPayments(common.HexToAddress("0xfb7974b7616a0c0dbd08c7fee7f1291548045e33"), blockchain)
+	if err != nil {
+		fmt.Printf("Unable to bind to deployed instance of contract:%v", err)
+	}
+	payment, er := contract.StartNewPayment(auth, big.NewInt(price), big.NewInt(externalPayerId), big.NewInt(externalReceiverId))
+	if err != nil {
+		fmt.Println("Unable to bind to deployed instance of contract:%v :%v", er, hello)
+	}
+	fmt.Printf("new payment :%v", hello)
+	return payment, er
+}
 ```
 
 We first use  the function ```NewPayments(address, blockchain)``` to connect the user’s wallet to the blockchain. Here, the 0xfb7974b7616a0c0dbd08c7fee7f1291548045e33 address is the smart contract's address, given when ```deploySmartContract``` function is called in /blockchain_main.go .
