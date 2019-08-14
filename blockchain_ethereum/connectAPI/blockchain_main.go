@@ -5,34 +5,18 @@ import (
 	"fmt"
 	"math/big"
 	"github.com/ethereum/go-ethereum/common"
-
 	"github.com/ethereum/go-ethereum/ethclient"
-
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	//"github.com/ethereum/go-ethereum/accounts/abi/bind/backends"
-	//	"github.com/ethereum/go-ethereum/crypto"
-	//"github.com/ethereum/go-ethereum/common"
 	"gitlab.com/bienestar-mx/api/pkg/blockchain_ethereum/smartContract"
 
 )
 
 /*
-func main(){
-
-	deploySmartContract("Imodollar", "ImD", big.NewInt(100000), common.HexToAddress("0x4da93B7EeCe99748afac5FDf3B99138177710ff3"), big.NewInt(1))
-
-	}
-	*/
-
-
-
-/* 
 ---------------  THIS FUNCTION DEPLOYS THE SMART CONTRACT ON AN ETHEREUM NODE  --------------------
 Must be deployed at the opening of the app
 */
 
 func deploySmartContract(tokenName string, tokenSymbol string, tokenInitialBalance *big.Int, tokenDevAddress common.Address, setSellPrice *big.Int)  (common.Address){
-//func main()  {
 	
 	/*
 	This is the private key of the palo's account 
