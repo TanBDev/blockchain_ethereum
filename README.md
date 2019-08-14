@@ -2,8 +2,10 @@
 
 
 The project is composed of two parts : 
-	- The smart contract, coded in solidity and composed, after compilation, of golang files (/smartContract)
-	- The api in golang (/connectAPI)
+- The smart contract, coded in solidity and composed, after compilation, of golang files (/smartContract)
+- The api in golang (/connectAPI)
+
+
 After developing the smart contract in solidity, and testing its function on remix, I can compile it inside my project. I first put my solidity code in a file of my text editor and call it Contract.sol. 
 In my editor terminal :
 ```
