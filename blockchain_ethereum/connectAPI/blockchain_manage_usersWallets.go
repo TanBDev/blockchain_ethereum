@@ -9,45 +9,14 @@ import (
 	"math/big"
 	"os"
 	"bytes"
-    "encoding/json"
-
+    	"encoding/json"
 	"github.com/ethereum/go-ethereum/core/types"
-
-	//"context"
-	//"math/big"
-	//"time"
-	//"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/accounts/keystore"
 	"github.com/ethereum/go-ethereum/ethclient"
-	//"github.com/ethereum/go-ethereum/common/hexutil"
-	//"github.com/ethereum/go-ethereum/crypto"
-	//"github.com/ethereum/go-ethereum/crypto/sha3"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	//"github.com/ethereum/go-ethereum/accounts/abi/bind/backends"
-	//"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common"
 	contracts "gitlab.com/bienestar-mx/api/pkg/blockchain_ethereum/smartContract"
 )
-/*
-type Model struct {
-    N  json.RawMessage `json:"name" bson:"name"`
-}
-
-func (m *Model) Name() string {
-    return string(m.N)
-}
-*/
-func main() {
-	//importPrivateKey(4, "gege")
-	d := &Data{}
-    err := json.Unmarshal(sampleJSON, d)
-    if err != nil {
-        log.Fatal(err)
-    }
-
-    log.Println(d.ID)
-}
-
 
 /*
 Doesn't work yet!!!
@@ -81,65 +50,38 @@ func createKs(userName string, clientPassword string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(account.Address.Hex()) // 0x20F8D42FB0F667F2E53930fed426f225752453b3
+	fmt.Println(account.Address.Hex()) // example: 0x20F8D42FB0F667F2E53930fed426f225752453b3
 	file := account.URL.String()
 
 	createAUser(userName, file, account.Address.Hex(), password)
 }
 
 func createAUser(userName string, file string, account string, password string) *types.Transaction {
-	//func main(){
 	//Setup my account key
-
-	// Use palo's account coz we don't have the client yet to connect to his account
+	// Use palo's account because we don't have the client yet to connect to his account
 	key := `{"address":"4da93b7eece99748afac5fdf3b99138177710ff3","crypto":{"cipher":"aes-128-ctr","ciphertext":"53492bc230964b57761e9aebb288f3e3e0c9311605dc8d74a2417b8d38bda12a","cipherparams":{"iv":"0fa80fd44a285f6871d1b234c1311ff8"},"kdf":"scrypt","kdfparams":{"dklen":32,"n":262144,"p":1,"r":8,"salt":"9af823c6e8059c8de80611277125fc050fed31b42686b499df2b44289d3694a9"},"mac":"6e8451f4fe4054a978444bc551af3826e43716f97ed40718e6bdefb38c61db27"},"id":"95daa908-efc1-433a-b402-d5e2e0dc4d19","version":3}`
-
+	
+	//"Ornithorynque1" is the password of the account
 	auth, err := bind.NewTransactor(strings.NewReader(key), "Ornithorynque1")
 	if err != nil {
 		fmt.Printf("Cannot bind to account: %v : %v", err, auth)
 	}
 	auth.GasLimit = 1443312
-
+	//connect to the ethereum node
 	blockchain, err := ethclient.Dial("https://rinkeby.infura.io/v3/44029fa59f854e649e0a4e9f3691de56")
 	if err != nil {
 		fmt.Printf("Cannot bind to blockchain: %v : %v", err, blockchain)
 	}
 
 	// contract = contracts.NewPayments() permits to use a new function in the contract
+	//0x9b9e1cc61f08bd344451f21e4fe6cb67e8f41d17 is the contract's address gicen by the deploySmartContract function in blockchain_main.go
 	contract, err := contracts.NewPayments(common.HexToAddress("0x9b9e1cc61f08bd344451f21e4fe6cb67e8f41d17"), blockchain)
 	if err != nil {
 		fmt.Printf("Unable to bind to deployed instance of contract:%v", err)
 	}
-
-	/*
-
-		key := 	importPrivateKey(userId, password)
-
-		//Set up the user
-
-		auth, err := bind.NewTransactor(strings.NewReader(string(key)), password)
-		if err != nil {
-			fmt.Printf("Cannot bind to account: %v : %v", err, auth)
-		}
-		auth.GasLimit = 66082
-
-		//Set up the blockchain environnement: connection to a node
-		blockchain, err := ethclient.Dial("https://rinkeby.infura.io/v3/44029fa59f854e649e0a4e9f3691de56")
-		if err != nil {
-			fmt.Printf("Cannot bind to blockchain: %v : %v", err, blockchain)
-
-		}
-
-		// Creates a new client inside the blockchain
-		contract, err := contracts.NewPayments(common.HexToAddress("0x9b9e1cc61f08bd344451f21e4fe6cb67e8f41d17"), blockchain)
-		if err != nil {
-			fmt.Printf("Unable to bind to deployed instance of contract:%v", err)
-		}
-	*/
-
 	fmt.Println("contrat:%v", contract)
 
-	// contract.ANewClient() cells the function aNewClient in the smart contract
+	// contract.ANewClient() activate the function aNewClient in the smart contract to save the client into the blockchain
 	clientId, er := contract.ANewClient(auth, userName, file, account)
 	if err != nil {
 		fmt.Println("Unable to create client:%v :%v", er, clientId)
@@ -153,12 +95,11 @@ func createAUser(userName string, file string, account string, password string) 
 //Imports the client's wallet
 func importPrivateKey(userId int64, password string) string {
 
-	//type of file :  "./tmp/UTC--2018-07-04T09-58-30.122808598Z--20f8d42fb0f667f2e53930fed426f225752453b3"
-	//D'ou ca vient???
+	//example of file :  "./tmp/UTC--2018-07-04T09-58-30.122808598Z--20f8d42fb0f667f2e53930fed426f225752453b3"
 	ks := keystore.NewKeyStore("./tmp", keystore.StandardScryptN, keystore.StandardScryptP)
-	//file:= accounts.encrypt(ks.PrivateKey, password)
 
 	//to get the path to the wallet's file we need to import the user from the blockchain 
+	//userId is the address of the user inside the blockchain
 	_, file, _ := getAUser(userId)
 
 	jsonBytes, err := ioutil.ReadFile(file)
@@ -167,13 +108,14 @@ func importPrivateKey(userId int64, password string) string {
 	}
 
 	//Import the wallet
-	//first password is the oldone, second the new one
+	//first password is the old one, second the new one
 	account, err := ks.Import(jsonBytes, password, password)
 	if err != nil {
 		log.Fatal("cannot import the account", err)
 	}
-	fmt.Println(account.Address.Hex()) // 0x20F8D42FB0F667F2E53930fed426f225752453b3
+	fmt.Println(account.Address.Hex()) // example: 0x20F8D42FB0F667F2E53930fed426f225752453b3
 
+	//set the key
 	key, err := keystore.DecryptKey(jsonBytes, password)
 	if err != nil {
 		fmt.Println("json key failed to decrypt: %v", err)
@@ -187,37 +129,31 @@ func importPrivateKey(userId int64, password string) string {
 	fmt.Printf("%x", string(jsonBytes))
 
 	return string(key.PrivateKey.D.Bytes())
-
-	/*
-	       keyjson, err := ioutil.ReadFile(file)
-
-	       key, err := accounts.DecryptKey(keyjson, password)
-	       if err != nil {
-	           fmt.Println("json key failed to decrypt: %v", err)
-	       }
-
-	   	fmt.Printf("%x", crypto.FromECDSA(key.PrivateKey))
-	   	return crypto.FromECDSA(key.PrivateKey)*/
 }
 
 
-
+//get the user's information inside the blockchain with his address
 func getAUser(userId int64) (string, string, string) {
 
 	// Use palo's account because we don't have the client yet to connect to his account
 	key := `{"address":"4da93b7eece99748afac5fdf3b99138177710ff3","crypto":{"cipher":"aes-128-ctr","ciphertext":"53492bc230964b57761e9aebb288f3e3e0c9311605dc8d74a2417b8d38bda12a","cipherparams":{"iv":"0fa80fd44a285f6871d1b234c1311ff8"},"kdf":"scrypt","kdfparams":{"dklen":32,"n":262144,"p":1,"r":8,"salt":"9af823c6e8059c8de80611277125fc050fed31b42686b499df2b44289d3694a9"},"mac":"6e8451f4fe4054a978444bc551af3826e43716f97ed40718e6bdefb38c61db27"},"id":"95daa908-efc1-433a-b402-d5e2e0dc4d19","version":3}`
 
+	//connects to the account
+	//"Ornithorynque1" is the password of the wallet
 	auth, err := bind.NewTransactor(strings.NewReader(key), "Ornithorynque1")
 	if err != nil {
 		fmt.Printf("Cannot bind to account: %v : %v", err, auth)
 	}
 	auth.GasLimit = 1443312
-
+	
+	//connects to the ethereum node
 	blockchain, err := ethclient.Dial("https://rinkeby.infura.io/v3/44029fa59f854e649e0a4e9f3691de56")
 	if err != nil {
 		fmt.Printf("Cannot bind to blockchain: %v : %v", err, blockchain)
 	}
 
+	//Connects to the smart contract
+	//0x9b9e1cc61f08bd344451f21e4fe6cb67e8f41d17 is the contract's address gicen by the deploySmartContract function in blockchain_main.go
 	contract, err := contracts.NewPayments(common.HexToAddress("0x9b9e1cc61f08bd344451f21e4fe6cb67e8f41d17"), blockchain)
 	if err != nil {
 		fmt.Printf("Unable to bind to deployed instance of contract:%v", err)
@@ -233,8 +169,9 @@ func getAUser(userId int64) (string, string, string) {
 	return userName, file, clientAccountAddress
 }
 
-/*
 
+	//NOT TESTED YET
+/*
 	//send ether to new account
 	d := time.Now().Add(1000 * time.Millisecond)
 	ctx, cancel := context.WithDeadline(context.Background(), d)
