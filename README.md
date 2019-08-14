@@ -44,7 +44,21 @@ To import a user’s keystore we need to call importPrivateKey(userId int64, pas
 Implementation : Every time we call a smart contract’s funtion, one of the argument will be the clientId. We need to be able to access it while the client is connected
 
 # Smart contract functions
-All the functions in blockchain_transactions.go are pretty simple to call. They will be called every time needed
+To call a smart contract’s function we need to go to /blockchain_transactions.go
+Here is an example:
+func blockchainStartNewPayment(price int64, externalPayerId int64, externalReceiverId int64) (*types.Transaction, error){    contract, err := contracts.NewPayments(common.HexToAddress("0xfb7974b7616a0c0dbd08c7fee7f1291548045e33"), blockchain)    if err != nil {       fmt.Printf("Unable to bind to deployed instance of contract:%v", err)    }     payment, er := contract.StartNewPayment(auth, big.NewInt(price), big.NewInt(externalPayerId), big.NewInt(externalReceiverId))    if err != nil {       fmt.Println("Unable to bind to deployed instance of contract:%v :%v", er, hello)    }    fmt.Printf("new payment :%v", hello)    return hello, er }
+
+We first use  the function NewPayments(address, blockchain) to connect the user’s wallet to the blockchain. Here, the 0xfb7974b7616a0c0dbd08c7fee7f1291548045e33 address is the user’s address.
+contracts.NewPayments(common.HexToAddress("0xfb7974b7616a0c0dbd08c7fee7f1291548045e33"), blockchain)
+Blockchain was previously defined to connect to an ethereum node with 
+blockchain, err := ethclient.Dial("https://rinkeby.infura.io/v3/44029fa59f854e649e0a4e9f3691de56")
+
+then, we call the startNewPayment function of the smart contract 
+payment, er := contract.StartNewPayment(auth, big.NewInt(price), big.NewInt(externalPayerId), big.NewInt(externalReceiverId))
+auth was previously declared to link to the user’s wallet
+auth, err := bind.NewTransactor(strings.NewReader(key), password)
+
+auth contains the private key of the wallet, it is only used for function that modify the blockchain and so has a transaction fee. Function that doesn’t have a fee only use &bind.CallOpts{Pending: true} instead
 
 The client and payment functions :
 - aNewClient (string username, string file, string clientAccountAddress) returns (int userId)
