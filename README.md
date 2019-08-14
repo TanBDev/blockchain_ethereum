@@ -54,7 +54,8 @@ To import a user’s keystore we need to call ```importPrivateKey(userId int64, 
 Implementation : Every time we call a smart contract’s funtion, one of the argument will be the clientId. We need to be able to access it while the client is connected
 
 # Smart contract functions
-To call a smart contract’s function we need to go to /blockchain_transactions.go
+To call a smart contract’s function we need to go to /blockchain_transactions.go.
+
 Here is an example:
 ```
 func blockchainStartNewPayment(price int64, externalPayerId int64, externalReceiverId int64) (*types.Transaction, error){
@@ -128,7 +129,7 @@ transfer (address _to, int amount)
 ```
 In case we are sure that the one that calls the function is the one that shall pay the payment
 ```
-setPrice (int newSallPrice)
+setPrice (int newSellPrice)
 ```
 The function that sets how much costs an imobly token compared to the native cryptocurrency (ethers) : equal the price we buy/sell each token in ethers.
 ```
